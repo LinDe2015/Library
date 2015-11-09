@@ -3,13 +3,15 @@ package library.tysci.com;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-public class ScrollingActivity extends AppCompatActivity
+import com.linde.library.activity.NetChangeActivity;
+import com.linde.library.broadcast_receiver.net.NetState;
+
+public class ScrollingActivity extends NetChangeActivity
 {
 
     @Override
@@ -54,5 +56,22 @@ public class ScrollingActivity extends AppCompatActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void netChange(NetState state)
+    {
+        switch (state)
+        {
+        case NET_NO:
+            mLogUtils.i("NET_NO");
+            break;
+        case NET_MOBILE:
+            mLogUtils.i("NET_MOBILE");
+            break;
+        case NET_WIFI:
+            mLogUtils.i("NET_WIFI");
+            break;
+        }
     }
 }
