@@ -23,7 +23,7 @@ public class VolleyUtils
 
     private VolleyUtils() {}
 
-    public static void install(Application application)
+    public static void init(Application application)
     {
         if (hadInstall) return;
         final VolleyUtils utils = VolleyUtils.getInstance();

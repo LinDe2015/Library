@@ -4,7 +4,7 @@ import com.linde.library.utils.VolleyUtils;
 
 /**
  * Created by LinDe on 2015/11/9.
- * Wrap Volley
+ * Volley工具类初始化
  */
 public class VolleyApplication extends CustomExceptionApplication
 {
@@ -12,6 +12,6 @@ public class VolleyApplication extends CustomExceptionApplication
     public void onCreate()
     {
         super.onCreate();
-        VolleyUtils.install(this);
+        VolleyUtils.init(this);
     }
 }

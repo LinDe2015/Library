@@ -17,7 +17,7 @@
             android:name=".broadcast_receiver.NetChangeReceiver"
             android:enabled="true"
             android:exported="true">
-            <intent-filter>
+            <intent-filter android:priority="@integer/int_max">
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
                 <action android:name="android.net.ethernet.ETHERNET_STATE_CHANGED"/>
             </intent-filter>

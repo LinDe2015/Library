@@ -65,6 +65,12 @@ public abstract class BaseRecyclerAdapter<Bean, VH extends RecyclerView.ViewHold
 
     protected abstract void onBindViewHolder(VH vh, Bean bean, int position);
 
+    protected void setList(List<Bean> list)
+    {
+        this.list = list;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemViewType(int position)
     {
@@ -90,6 +96,7 @@ public abstract class BaseRecyclerAdapter<Bean, VH extends RecyclerView.ViewHold
         try
         {
             mHeaderViews.add(headerView);
+            notifyDataSetChanged();
             return true;
         }
         catch (Exception e)
@@ -105,6 +112,7 @@ public abstract class BaseRecyclerAdapter<Bean, VH extends RecyclerView.ViewHold
         try
         {
             mFootViews.add(footView);
+            notifyDataSetChanged();
             return true;
         }
         catch (Exception e)

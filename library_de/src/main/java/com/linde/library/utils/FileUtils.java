@@ -10,7 +10,7 @@ import java.io.FileOutputStream;
 
 /**
  * Created by LinDe on 2015/11/6.
- * 保存文件工具类
+ * 读写文件工具类
  */
 public class FileUtils
 {
@@ -49,6 +49,7 @@ public class FileUtils
      */
     public static String readCache(Context context, String fileName) {return read(new File(context.getCacheDir(), fileName));}
 
+    @Nullable
     public static String read(File file)
     {
         final LogUtils logUtils = new LogUtils(FileUtils.class);
@@ -63,27 +64,31 @@ public class FileUtils
             int len;
             //写入数据
             while ((len = fis.read(buffer)) != -1) {baos.write(buffer, 0, len);}
-            logUtils.i("Read from File \"" + file.toString() + "\" Success");
+            logUtils.i("Read from File Success");
             final String result = new String(baos.toByteArray());
-            logUtils.i("The Data is : " + result);
+            logUtils.i(result);
             return result;
         }
         catch (Exception e) {e.printStackTrace();}
+        logUtils.e("Read from File Failed");
         return null;
     }
 
     public static boolean write(File file, String writeString, boolean append)
     {
+        final LogUtils logUtils = new LogUtils(FileUtils.class);
         try
         {
             FileOutputStream fos = new FileOutputStream(file, append);
             byte[] b = writeString.getBytes();
             fos.write(b);
             fos.close();
-            new LogUtils(FileUtils.class).i("Write File \"" + file.toString() + "\" Success");
+            logUtils.i("Write to File Success");
+            logUtils.i(fos.toString());
             return true;
         }
         catch (Exception e) {e.printStackTrace();}
+        logUtils.e("Write to File Failed");
         return false;
     }
 }

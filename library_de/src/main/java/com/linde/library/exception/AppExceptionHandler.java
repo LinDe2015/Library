@@ -48,7 +48,7 @@ public class AppExceptionHandler implements UncaughtExceptionHandler
      * 程序的Context对象
      */
     private final Application mApplication;
-    private final SendExceptionToService sendService;
+    private final SendExceptionToServer mSendServer;
 
     /**
      * 使用Properties来保存设备的信息和错误堆栈信息
@@ -65,13 +65,13 @@ public class AppExceptionHandler implements UncaughtExceptionHandler
     /**
      * 保证只有一个CrashHandler实例
      */
-    private AppExceptionHandler(Application app, SendExceptionToService sendExceptionToService)
+    private AppExceptionHandler(Application app, SendExceptionToServer sendServer)
     {
         mLogUtils = new LogUtils(getClass());
         mApplication = app;
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
-        sendService = sendExceptionToService;
+        mSendServer = sendServer;
     }
 
     /**
@@ -81,17 +81,17 @@ public class AppExceptionHandler implements UncaughtExceptionHandler
      * 获取系统默认的UncaughtException处理器,
      * 设置该CrashHandler为程序的默认处理器
      *
-     * @param app                    {@link Application}
-     * @param sendExceptionToService {@link SendExceptionToService}
+     * @param app        {@link Application}
+     * @param sendServer {@link SendExceptionToServer}
      */
-    public static AppExceptionHandler getInstance(Application app, SendExceptionToService sendExceptionToService)
+    public static AppExceptionHandler getInstance(Application app, SendExceptionToServer sendServer)
     {
         if (INSTANCE == null)
         {
             synchronized (AppExceptionHandler.class)
             {
                 if (INSTANCE == null)
-                    INSTANCE = new AppExceptionHandler(app, sendExceptionToService);
+                    INSTANCE = new AppExceptionHandler(app, sendServer);
             }
         }
         return INSTANCE;
@@ -148,7 +148,7 @@ public class AppExceptionHandler implements UncaughtExceptionHandler
         String crashFileName = saveCrashInfoToFile(ex);
         //发送错误报告到服务器
 //        sendCrashReportsToServer(mApplication);
-        sendService.sendException(mDeviceCrashInfo.toString());
+        mSendServer.sendException(mDeviceCrashInfo.toString());
         return true;
     }
 

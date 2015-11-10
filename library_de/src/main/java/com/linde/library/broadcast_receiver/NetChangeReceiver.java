@@ -93,6 +93,5 @@ public class NetChangeReceiver extends BroadcastReceiver
         }
     }
 
-    @SuppressWarnings("unused")
     public static void clearNetChangeListener() {list.clear();}
 }

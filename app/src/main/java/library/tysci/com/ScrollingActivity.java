@@ -10,19 +10,21 @@ import android.view.View;
 
 import com.linde.library.activity.NetChangeActivity;
 import com.linde.library.broadcast_receiver.net.NetState;
+import com.linde.library.utils.FindViewByIdUtils;
 
 public class ScrollingActivity extends NetChangeActivity
 {
+    private Toolbar toolbar = null;
+    private FloatingActionButton fab = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        FindViewByIdUtils.injectAllFields(this);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
         {
             @Override

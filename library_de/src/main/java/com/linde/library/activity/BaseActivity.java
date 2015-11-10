@@ -10,7 +10,7 @@ import com.linde.library.utils.LogUtils;
  * Created by LinDe on 2015/11/6.
  * Wrap Activity
  */
-public class BaseActivity extends AppCompatActivity
+public abstract class BaseActivity extends AppCompatActivity
 {
     protected final LogUtils mLogUtils = new LogUtils(getClass());
 

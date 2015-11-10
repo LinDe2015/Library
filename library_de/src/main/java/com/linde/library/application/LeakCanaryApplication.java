@@ -4,9 +4,9 @@ import com.squareup.leakcanary.LeakCanary;
 
 /**
  * Created by LinDe on 2015/11/9.
- * Add Leak Listener
+ * 监控App内存泄漏
  */
-public class LeakCanaryApplication extends VolleyApplication
+public class LeakCanaryApplication extends InjectApplication
 {
     @Override
     public void onCreate()
