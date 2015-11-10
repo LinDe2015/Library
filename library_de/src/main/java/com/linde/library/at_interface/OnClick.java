@@ -1,4 +1,4 @@
-package com.linde.library.utils;
+package com.linde.library.at_interface;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,8 +9,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 /**
  * Created by LinDe on 2015/11/10.
+ * OnClick
  */
 public @interface OnClick
 {
-    int value();
+    int[] value();
 }

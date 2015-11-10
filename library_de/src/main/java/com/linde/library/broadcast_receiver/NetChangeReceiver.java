@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.linde.library.broadcast_receiver.net.NetChangeListener;
-import com.linde.library.broadcast_receiver.net.NetState;
+import com.linde.library.enum_.NetState;
+import com.linde.library.interface_.NetChangeListener;
 import com.linde.library.utils.LogUtils;
 
 import java.util.ArrayList;

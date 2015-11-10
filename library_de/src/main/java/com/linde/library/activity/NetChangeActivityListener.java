@@ -1,13 +1,13 @@
 package com.linde.library.activity;
 
-import com.linde.library.broadcast_receiver.net.NetChangeListener;
+import com.linde.library.interface_.NetChangeListener;
 import com.linde.library.broadcast_receiver.NetChangeReceiver;
 
 /**
  * Created by LinDe on 2015/11/9.
  * Add Net Change Listener
  */
-public abstract class NetChangeActivity extends BaseActivity implements NetChangeListener
+public abstract class NetChangeActivityListener extends ListenerInjectActivity implements NetChangeListener
 {
     @Override
     protected void onStart()

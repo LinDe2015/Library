@@ -1,4 +1,4 @@
-package com.linde.library.broadcast_receiver.net;
+package com.linde.library.enum_;
 
 /**
  * Created by LinDe on 2015/11/9.
