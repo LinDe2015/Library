@@ -122,14 +122,23 @@ public abstract class BaseRecyclerAdapter<Bean, VH extends RecyclerView.ViewHold
         }
     }
 
+    public boolean removeHeaderView(View headerView)
+    {return mHeaderViews.remove(headerView);}
+
+    public boolean removeFootView(View footView)
+    {return mFootViews.remove(footView);}
+
     public void clearHeaderView() {mHeaderViews.clear();}
 
     public void clearFootView() {mFootViews.clear();}
 
-    public boolean isHeaderView(int position) {return position < mHeaderViews.size();}
+    public boolean isHeaderView(int position)
+    {return position < mHeaderViews.size();}
 
-    public boolean isFootView(int position) {return position >= mHeaderViews.size() + (list == null ? 0 : list.size());}
+    public boolean isFootView(int position)
+    {return position >= mHeaderViews.size() + (list == null ? 0 : list.size());}
 
     @Override
-    public int getItemCount() {return mHeaderViews.size() + (list == null ? 0 : list.size()) + mFootViews.size();}
+    public int getItemCount()
+    {return mHeaderViews.size() + (list == null ? 0 : list.size()) + mFootViews.size();}
 }

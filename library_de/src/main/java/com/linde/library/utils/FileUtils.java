@@ -16,43 +16,29 @@ public class FileUtils
 {
     private FileUtils() {}
 
-    /**
-     * 保存数据到缓存区（替换）
-     *
-     * @param context     The application of context
-     * @param fileName    文件名（含后缀）
-     * @param writeString 写入缓存文件的字符串
-     * @return 保存成功
-     */
     public static boolean writeCache(Context context, String fileName, String writeString)
     {return writeCache(context, fileName, writeString, false);}
 
-    /**
-     * 保存数据到缓存区
-     *
-     * @param context     The application of context
-     * @param fileName    文件名（含后缀）
-     * @param writeString 写入缓存文件的字符串
-     * @param append      true 添加字符串 false 替换字符串
-     * @return 保存成功
-     */
     public static boolean writeCache(Context context, String fileName, String writeString, boolean append)
     {return write(new File(context.getCacheDir(), fileName), writeString, append);}
 
-    @Nullable
-    /**
-     * 读取缓存
-     *
-     * @param context  The application of context
-     * @param fileName 文件名（含后缀）
-     * @return 读取的字符串 may be null
-     */
-    public static String readCache(Context context, String fileName) {return read(new File(context.getCacheDir(), fileName));}
+    public static String readCache(Context context, String fileName)
+    {return read(new File(context.getCacheDir(), fileName));}
+
+    public static boolean writeFile(Context context, String fileName, String writeString)
+    {return writeFile(context, fileName, writeString, false);}
+
+    public static boolean writeFile(Context context, String fileName, String writeString, boolean append)
+    {return write(new File(context.getFilesDir(), fileName), writeString, append);}
+
+    public static String readFile(Context context, String fileName)
+    {return read(new File(context.getFilesDir(), fileName));}
 
     @Nullable
     public static String read(File file)
     {
         final LogUtils logUtils = new LogUtils(FileUtils.class);
+        logUtils.i("Read File Name: " + file.getName());
         try
         {
             new LogUtils(FileUtils.class).i("文件最后修改时间：" + file.lastModified());
@@ -77,6 +63,7 @@ public class FileUtils
     public static boolean write(File file, String writeString, boolean append)
     {
         final LogUtils logUtils = new LogUtils(FileUtils.class);
+        logUtils.i("Write File Name: " + file.getName());
         try
         {
             FileOutputStream fos = new FileOutputStream(file, append);

@@ -3,7 +3,7 @@ package com.linde.library.application;
 import android.app.Application;
 
 import com.linde.library.exception.AppExceptionHandler;
-import com.linde.library.exception.SendExceptionToServer;
+import com.linde.library.interface_.SendExceptionToServer;
 import com.linde.library.utils.LogUtils;
 
 /**
@@ -18,9 +18,14 @@ public class CustomExceptionApplication extends Application implements SendExcep
     public void onCreate()
     {
         super.onCreate();
-        AppExceptionHandler.getInstance(this, this);
+        AppExceptionHandler app = AppExceptionHandler.getInstance(this, this);
+        app.sendPreviousReportsToServer();
     }
 
     @Override
-    public void sendException(String errorString) {mLogUtils.i("You Need Send Exception to Service");}
+    public boolean sendException(String errorString)
+    {
+        mLogUtils.e(errorString);
+        return false;
+    }
 }

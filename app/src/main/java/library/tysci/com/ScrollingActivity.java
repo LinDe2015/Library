@@ -8,13 +8,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.linde.library.activity.NetChangeActivityListener;
+import com.linde.library.activity.NetChangeActivity;
 import com.linde.library.enum_.NetState;
 import com.linde.library.utils.FindViewByIdUtils;
-import com.linde.library.at_interface.OnClick;
 
-public class ScrollingActivityListener extends NetChangeActivityListener
+public class ScrollingActivity extends NetChangeActivity
 {
+    private final static int FRAGMENT_ID = R.id.fragment1;
     private Toolbar toolbar = null;
     private FloatingActionButton fab = null;
 
@@ -25,19 +25,16 @@ public class ScrollingActivityListener extends NetChangeActivityListener
         setContentView(R.layout.activity_scrolling);
         FindViewByIdUtils.injectAllFields(this);
         setSupportActionBar(toolbar);
-    }
-
-    @OnClick(R.id.fab)
-    private void fab(View v)
-    {
-        Snackbar.make(fab, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-    }
-
-    private void fab(View view, long l)
-    {
-        Snackbar.make(fab, "Replace with your own action Long", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        fab.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Snackbar.make(fab, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        addFragment(FRAGMENT_ID, new TestFragment());
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
  * Created by LinDe on 2015/11/9.
  * 通过注解初始化所有控件，在执行方法
  * {@link FindViewByIdUtils#injectAllFields(Activity)} 或者
- * {@link FindViewByIdUtils#injectAllFields(Class, View)}之前，
+ * {@link FindViewByIdUtils#injectAllFields(Object, View)}之前，
  * 需要进行初始化操作{@link FindViewByIdUtils#init(Application)}，
  * 控件需申明为成员变量，变量名需与id名相同
  */
@@ -61,12 +61,13 @@ public class FindViewByIdUtils
     /**
      * 一键注解
      *
-     * @param clazz    {@link Class}
+     * @param receiver Method  {@link Object}
      * @param rootView {@link View}
      */
-    public static void injectAllFields(Class clazz, View rootView)
+    public static void injectAllFields(Object receiver, View rootView)
     {
         App_null();
+        final Class clazz = receiver.getClass();
         final Resources res = application.getResources();
         final String packageName = application.getPackageName();
         final Field[] fields = clazz.getDeclaredFields();
@@ -77,7 +78,7 @@ public class FindViewByIdUtils
             f.setAccessible(true);
             try
             {
-                f.set(rootView, rootView.findViewById(viewId));
+                f.set(receiver, rootView.findViewById(viewId));
             }
             catch (Exception e) {e.printStackTrace();}
             f.setAccessible(false);

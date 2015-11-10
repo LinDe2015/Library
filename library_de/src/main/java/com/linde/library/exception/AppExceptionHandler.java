@@ -7,20 +7,21 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Looper;
-import android.support.annotation.Nullable;
 import android.widget.Toast;
 
+import com.linde.library.interface_.SendExceptionToServer;
 import com.linde.library.utils.FileUtils;
 import com.linde.library.utils.LogUtils;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.TreeSet;
 
 /**
  * 处理应用程序中出现的异常
@@ -30,6 +31,8 @@ import java.util.Properties;
 
 public class AppExceptionHandler implements UncaughtExceptionHandler
 {
+    private final static String FEN_GE_XIAN = "FEN_GE_XIAN";
+    private final static String ERROR = "ERROR.txt";
     private final LogUtils mLogUtils;
     /**
      * 是否开启日志输出,在Debug状态下开启,
@@ -139,113 +142,125 @@ public class AppExceptionHandler implements UncaughtExceptionHandler
             {
                 Looper.prepare();
                 Toast.makeText(mApplication, "应用出现错误:" + msg, Toast.LENGTH_LONG).show();
+                mLogUtils.e("应用出现错误:" + msg);
                 Looper.loop();
             }
         }.start();
         //收集设备信息   
         collectCrashDeviceInfo(mApplication);
         //保存错误报告文件   
-        String crashFileName = saveCrashInfoToFile(ex);
+        saveCrashInfoToFile(ex);
         //发送错误报告到服务器
 //        sendCrashReportsToServer(mApplication);
-        mSendServer.sendException(mDeviceCrashInfo.toString());
         return true;
     }
 
-//    /**
-//     * 在程序启动时候, 可以调用该函数来发送以前没有发送的报告
-//     */
-//    public void sendPreviousReportsToServer()
-//    {
-//        sendCrashReportsToServer(mApplication);
-//    }
+    /**
+     * 在程序启动时候, 可以调用该函数来发送以前没有发送的报告
+     */
+    public void sendPreviousReportsToServer()
+    {
+        sendCrashReportsToServer(mApplication);
+    }
 
-//    /**
-//     * 把错误报告发送给服务器,包含新产生的和以前没发送的.
-//     *
-//     * @param context {@link Context}
-//     */
-//    private void sendCrashReportsToServer(Context context)
-//    {
-//        String[] crFiles = getCrashReportFiles(context);
-//        if (crFiles != null && crFiles.length > 0)
-//        {
-//            TreeSet<String> sortedFiles = new TreeSet<>();
-//            sortedFiles.addAll(Arrays.asList(crFiles));
-//
-//            for (String fileName : sortedFiles)
-//            {
-//                File cr = new File(context.getFilesDir(), fileName);
+    /**
+     * 把错误报告发送给服务器,包含新产生的和以前没发送的.
+     *
+     * @param context {@link Context}
+     */
+    private void sendCrashReportsToServer(Context context)
+    {
+        String[] crFiles = getCrashReportFiles();
+        //noinspection ConstantConditions
+        if (crFiles != null && crFiles.length > 0)
+        {
+            TreeSet<String> sortedFiles = new TreeSet<>();
+            sortedFiles.addAll(Arrays.asList(crFiles));
+
+            for (String fileName : sortedFiles)
+            {
+                File cr = new File(context.getFilesDir(), fileName);
 //                postReport(cr);
-//                //noinspection ResultOfMethodCallIgnored
-//                cr.delete();// 删除已发送的报告
-//            }
-//        }
-//    }
+                if (mSendServer.sendException(FileUtils.read(cr)))
+                {
+                    try
+                    {
+                        //noinspection ResultOfMethodCallIgnored
+                        cr.delete();// 删除已发送的报告
+                    }
+                    catch (Exception e) {e.printStackTrace();}
+                }
+            }
+        }
+    }
 
 //    private void postReport(File file)
 //    {
-//        // 使用HTTP Post 发送错误报告到服务器
-//        // 这里不再详述,开发者可以根据OPhoneSDN上的其他网络操作
-//        // 教程来提交错误报告
+    // 使用HTTP Post 发送错误报告到服务器
+    // 这里不再详述,开发者可以根据OPhoneSDN上的其他网络操作
+    // 教程来提交错误报告
 //    }
 
     /**
      * 获取错误报告文件名
      *
-     * @param context {@link Context}
      * @return {@link String[]}
      */
-    private String[] getCrashReportFiles(Context context)
+    private String[] getCrashReportFiles()
     {
-        File filesDir = context.getFilesDir();
-        FilenameFilter filter = new FilenameFilter()
-        {
-            public boolean accept(File dir, String name)
-            {
-                return name.endsWith(CRASH_REPORTER_EXTENSION);
-            }
-        };
-        return filesDir.list(filter);
+//        File filesDir = context.getFilesDir();
+        String names = FileUtils.readFile(mApplication, ERROR);
+        return names.split(FEN_GE_XIAN);
+//        FilenameFilter filter = new FilenameFilter()
+//        {
+//            public boolean accept(File dir, String name)
+//            {
+//                return name.endsWith(CRASH_REPORTER_EXTENSION);
+//            }
+//        };
+//        return filesDir.list(filter);
     }
 
-    @Nullable
     /**
      * 保存错误信息到文件中
      *
      * @param ex {@link Throwable}
-     * @return {@link String}
      */
-    private String saveCrashInfoToFile(Throwable ex)
+    private void saveCrashInfoToFile(Throwable ex)
     {
+        mDeviceCrashInfo.clear();
         Writer info = new StringWriter();
         PrintWriter printWriter = new PrintWriter(info);
         ex.printStackTrace(printWriter);
-
         Throwable cause = ex.getCause();
         while (cause != null)
         {
             cause.printStackTrace(printWriter);
             cause = cause.getCause();
         }
-
         String result = info.toString();
         printWriter.close();
         mDeviceCrashInfo.put(STACK_TRACE, result);
-
         try
         {
             long timestamp = System.currentTimeMillis();
-            String fileName = "crash-" + timestamp + CRASH_REPORTER_EXTENSION;
-            FileUtils.writeCache(mApplication, fileName, mDeviceCrashInfo.toString());
+            String fileName = "error-" + timestamp + CRASH_REPORTER_EXTENSION;
+            File file = new File(mApplication.getFilesDir(), fileName);
+            FileUtils.write(file, mDeviceCrashInfo.toString(), false);
+            String nameFile = ERROR;
+            FileUtils.writeFile(mApplication, nameFile, fileName + "FEN_GE_XIAN", true);
             mLogUtils.e(mDeviceCrashInfo.toString());
-            return fileName;
+            if (mSendServer.sendException(mDeviceCrashInfo.toString()))
+            {
+                try
+                {
+                    //noinspection ResultOfMethodCallIgnored
+                    file.delete();
+                }
+                catch (Exception e) {e.printStackTrace();}
+            }
         }
-        catch (Exception e)
-        {
-            mLogUtils.e("an error occured while writing report file...", e);
-        }
-        return null;
+        catch (Exception e) {mLogUtils.e("An error occurred while writing report file...", e);}
     }
 
 
@@ -267,8 +282,8 @@ public class AppExceptionHandler implements UncaughtExceptionHandler
             }
         }
         catch (NameNotFoundException e) {mLogUtils.e("Error while collect package info", e);}
-        //使用反射来收集设备信息.在Build类中包含各种设备信息,   
-        //例如: 系统版本号,设备生产商 等帮助调试程序的有用信息   
+        // 使用反射来收集设备信息.在Build类中包含各种设备信息,
+        // 例如: 系统版本号,设备生产商 等帮助调试程序的有用信息
         Field[] fields = Build.class.getDeclaredFields();
         for (Field field : fields)
         {

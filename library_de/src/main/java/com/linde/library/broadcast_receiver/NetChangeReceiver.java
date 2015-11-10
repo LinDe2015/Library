@@ -82,16 +82,11 @@ public class NetChangeReceiver extends BroadcastReceiver
 
     public static void removeNetChangeListener(NetChangeListener change)
     {
-        final int size = list.size();
-        for (int i = 0; i < size; i++)
-        {
-            if (list.get(i) == change)
-            {
-                list.remove(i);
-                break;
-            }
-        }
+        if (change == null) return;
+        //noinspection StatementWithEmptyBody
+        while (list.remove(change)) {}
     }
 
+    @SuppressWarnings("unused")
     public static void clearNetChangeListener() {list.clear();}
 }

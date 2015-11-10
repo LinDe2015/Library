@@ -1,8 +1,10 @@
 package com.linde.library.activity;
 
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import com.linde.library.utils.LogUtils;
 
@@ -13,12 +15,6 @@ import com.linde.library.utils.LogUtils;
 public abstract class BaseActivity extends AppCompatActivity
 {
     protected final LogUtils mLogUtils = new LogUtils(getClass());
-
-    public <T extends View> T initViewById(int id)
-    {
-        //noinspection unchecked
-        return (T) findViewById(id);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -66,6 +62,48 @@ public abstract class BaseActivity extends AppCompatActivity
     protected void onDestroy()
     {
         super.onDestroy();
-        mLogUtils.i("onDestroy and The Activity is shut down");
+        mLogUtils.i("onDestroy and the Activity is shut down");
+    }
+
+    @SuppressWarnings("unused")
+    protected void addFragment(@IdRes int id, Fragment fragment)
+    {
+        try
+        {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .add(id, fragment)
+                    .commit();
+        }
+        catch (Exception e) {e.printStackTrace();}
+    }
+
+    @SuppressWarnings("unused")
+    protected void replaceFragment(@IdRes int id, Fragment fragment)
+    {
+        try
+        {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .replace(id, fragment)
+                    .commit();
+        }
+        catch (Exception e) {e.printStackTrace();}
+    }
+
+    @SuppressWarnings("unused")
+    protected void removeFragment(Fragment fragment)
+    {
+        try
+        {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                    .remove(fragment)
+                    .commit();
+        }
+        catch (Exception e) {e.printStackTrace();}
     }
 }
